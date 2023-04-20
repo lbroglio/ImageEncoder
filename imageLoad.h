@@ -38,8 +38,22 @@ class ImagePPM{
          * @param imageData  Double pointer storing the pixels which make up this image
          */
         ImagePPM(int magicNumber, int length, int width, int maxColorVal,Pixel** imageData);
+        /**
+         * @brief Destroy the Image PPM object
+         * Free the memory of its data array
+         */
+        ~ImagePPM();
         
 };
+
+/**
+ * @brief Parses in the data from a PPM image and converts it into a ImagePPM object.
+ * 
+ * @param filePath The file path to the image file to parse
+ * @return An ImagePPM object storing the parsed data
+ */
+ImagePPM parsePPMFile(std::string filePath);
+
 
 
 
