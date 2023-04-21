@@ -1,7 +1,7 @@
 #include<string>
 #include<iostream>
 #include<fstream>
-#include"imageLoad.h"
+#include"imageData.h"
 
 /**
  * @brief Gets the next entry it can find in the given file stream.
@@ -38,8 +38,23 @@ std::string readEntryASCII(std::ifstream* imgFile){
 
     return entry;
 }
+
+/**
+ * @brief Reads the three color values that make up a pixel from the given file. 
+ * Returns a pixel object representing the parsed data
+ * 
+ * @param imgFile Pointer to the file stream to read fro
+ * 
+ * @return Pixel object created from the parsed data
+ */
 Pixel readPixelASCII(std::ifstream* imgFile){
     Pixel toReturn;
+
+    toReturn.red = readEntryASCII(imgFile);
+    toReturn.blue = readEntryASCII(imgFile);
+    toReturn.green = readEntryASCII(imgFile);
+
+    return pixel;
 }
 
 
