@@ -1,8 +1,10 @@
 #include<iostream>
-#include"imageLoad.h"
+#include"imageData.h"
 
 int main(int argc, char* argv[]){
-    parsePPMFile("./TestImages/WhiteSquare.ppm");
+    ImagePPM parsedImg = parsePPMFile("./TestImages/WhiteSquare.ppm");
+
+    
 
     return 0;
 }

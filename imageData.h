@@ -9,6 +9,15 @@ struct Pixel{
     int red;
     int blue;
     int green;
+    /**
+     * @brief Outputs the contents of an Pixel object to a file.
+     * 
+     * @param file The filestream to output to
+     * @param outputFrom The Pixel object to output
+     * 
+     * @return The file stream with the given Pixel output to it
+     */
+    friend std::ofstream operator<<(std::ofstream file,Pixel outputFrom);
 };
 
 
@@ -43,6 +52,16 @@ class ImagePPM{
          * Free the memory of its data array
          */
         ~ImagePPM();
+    
+    /**
+     * @brief Outputs the contents of an ImagePPM object to a file. Creates a valid .PPM image file
+     * 
+     * @param file The filestream to output to
+     * @param outputFrom The ImagePPM object to output
+     * 
+     * @return The file stream with the given ImagePPM output to it
+     */
+    friend std::ofstream operator<<(std::ofstream file,ImagePPM outputFrom);
         
 };
 

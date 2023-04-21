@@ -50,11 +50,11 @@ std::string readEntryASCII(std::ifstream* imgFile){
 Pixel readPixelASCII(std::ifstream* imgFile){
     Pixel toReturn;
 
-    toReturn.red = readEntryASCII(imgFile);
-    toReturn.blue = readEntryASCII(imgFile);
-    toReturn.green = readEntryASCII(imgFile);
+    toReturn.red = atoi(readEntryASCII(imgFile).c_str());
+    toReturn.green = atoi(readEntryASCII(imgFile).c_str());
+    toReturn.blue = atoi(readEntryASCII(imgFile).c_str());
 
-    return pixel;
+    return toReturn;
 }
 
 
@@ -74,6 +74,9 @@ ImagePPM parsePPMFile(std::string filePath){
     //Get the entry containting the magic number (Will be in P# format)
     std::string magicNumberStr = readEntryASCII(&imgFile);
     
+    //Get magic number from its string
+    int magicNumber = magicNumberStr[1] - '0';
+
     //Get the dimesions and color depth
     int length = atoi(readEntryASCII(&imgFile).c_str());
     int width = atoi(readEntryASCII(&imgFile).c_str());
@@ -87,8 +90,33 @@ ImagePPM parsePPMFile(std::string filePath){
 
     for(int i =0; i < length; i++){
         for(int j =0; j < width; j++){
-            imageData[i][j] =  
+            imageData[i][j] = readPixelASCII(&imgFile);
         }
     }
+
+    //Create and return the ImagePPM object
+    return ImagePPM(magicNumber,length,width,colorMax,imageData);
     
+}
+
+friend std::ofstream operator<<(std::ofstream file,Pixel outputFrom){
+    file << outputFrom.red << ' ' << outputFrom.green << ' ' << outputFrom.blue;
+
+    return file;
+}
+
+std::ofstream operator<<(std::ofstream file,ImagePPM outputFrom){
+    //Output the header
+    file << 'P' << outputFrom.magicNumber << std::endl;
+    file << outputFrom.length << ' ' << outputFrom.width << std::endl;
+    file << outputFrom.maxColorVal << std::endl;
+
+    //Output the data
+    for(int i = 0; i < outputFrom.length; i++){
+        for(int j = 0; j < outputFrom.width; j++){
+            file << outputFrom.imageData[i][j] << std::endl;
+        }
+    }
+
+    return file;
 }
