@@ -61,13 +61,14 @@ Pixel readPixelASCII(std::ifstream* imgFile){
 ImagePPM::ImagePPM(int magicNumber, int length, int width, int maxColorVal,Pixel** imageData) : magicNumber(magicNumber), length(length), width(width), maxColorVal(maxColorVal), imageData(imageData){}
 
 ImagePPM::~ImagePPM(){
+    std::cout << __PRETTY_FUNCTION__ << std::endl;
     for(int i = 0; i<length; i++){
         delete[] imageData[i];
     }
     delete[] imageData;
 }
 
-ImagePPM parsePPMFile(std::string filePath){
+ImagePPM::ImagePPM(std::string filePath){
     //Load the file
     std::ifstream imgFile(filePath);
     
@@ -75,15 +76,15 @@ ImagePPM parsePPMFile(std::string filePath){
     std::string magicNumberStr = readEntryASCII(&imgFile);
     
     //Get magic number from its string
-    int magicNumber = magicNumberStr[1] - '0';
+    magicNumber = magicNumberStr[1] - '0';
 
     //Get the dimesions and color depth
-    int length = atoi(readEntryASCII(&imgFile).c_str());
-    int width = atoi(readEntryASCII(&imgFile).c_str());
-    int colorMax = atoi(readEntryASCII(&imgFile).c_str());
+    length = atoi(readEntryASCII(&imgFile).c_str());
+    width = atoi(readEntryASCII(&imgFile).c_str());
+    maxColorVal = atoi(readEntryASCII(&imgFile).c_str());
 
     //Initialized the 2D array to store the pixels
-    Pixel** imageData = new Pixel*[length];
+    imageData = new Pixel*[length];
     for(int i =0; i < length; i++){
         imageData[i] = new Pixel[width];
     }
@@ -94,18 +95,17 @@ ImagePPM parsePPMFile(std::string filePath){
         }
     }
 
-    //Create and return the ImagePPM object
-    return ImagePPM(magicNumber,length,width,colorMax,imageData);
-    
+    //Close the file
+    imgFile.close();
 }
 
-friend std::ofstream operator<<(std::ofstream file,Pixel outputFrom){
+std::ofstream& operator<<(std::ofstream& file,const Pixel& outputFrom){
     file << outputFrom.red << ' ' << outputFrom.green << ' ' << outputFrom.blue;
 
     return file;
 }
 
-std::ofstream operator<<(std::ofstream file,ImagePPM outputFrom){
+std::ofstream& operator<<(std::ofstream& file,const ImagePPM& outputFrom){
     //Output the header
     file << 'P' << outputFrom.magicNumber << std::endl;
     file << outputFrom.length << ' ' << outputFrom.width << std::endl;
@@ -114,7 +114,7 @@ std::ofstream operator<<(std::ofstream file,ImagePPM outputFrom){
     //Output the data
     for(int i = 0; i < outputFrom.length; i++){
         for(int j = 0; j < outputFrom.width; j++){
-            file << outputFrom.imageData[i][j] << std::endl;
+            file << (outputFrom.imageData[i][j]) << std::endl;
         }
     }
 

@@ -10,6 +10,18 @@ struct Pixel{
     int blue;
     int green;
     /**
+     * @brief Construct a new Pixel object
+     * 
+     * @param r The red value for this pixel
+     * @param g The green value for this pixel
+     * @param b The blue value for this pixel
+     */
+    Pixel(int r, int g, int b) : red(r), green(g), blue(b){}
+    /**
+     * @brief Deafult Constructor for Pixel Object
+     */
+    Pixel(){}
+    /**
      * @brief Outputs the contents of an Pixel object to a file.
      * 
      * @param file The filestream to output to
@@ -17,7 +29,7 @@ struct Pixel{
      * 
      * @return The file stream with the given Pixel output to it
      */
-    friend std::ofstream operator<<(std::ofstream file,Pixel outputFrom);
+    friend std::ofstream& operator<<(std::ofstream& file,const Pixel& outputFrom);
 };
 
 
@@ -28,13 +40,13 @@ struct Pixel{
 class ImagePPM{
     public:
         /** @brief The magic number of this PPM. 3 if the colors are stored as ASCII numbers. 6 they are stored in binary*/
-        int& magicNumber;
+        int magicNumber;
         /** @brief The length of this image*/
-        int& length;
+        int length;
         /** @brief The width of this image*/
-        int& width;
+        int width;
         /** @brief The maximum value any of the colors values in this image can be*/
-        int& maxColorVal;
+        int maxColorVal;
         /** @brief An array of the pixels making up this image*/
         Pixel** imageData;
         /**
@@ -47,6 +59,12 @@ class ImagePPM{
          * @param imageData  Double pointer storing the pixels which make up this image
          */
         ImagePPM(int magicNumber, int length, int width, int maxColorVal,Pixel** imageData);
+        /**
+         * @brief Creates a new ImagePPM object by parsing in the data from a given file.
+         * 
+         * @param filePath Path to the file to read the data from
+         */
+        ImagePPM(std::string filePath);
         /**
          * @brief Destroy the Image PPM object
          * Free the memory of its data array
@@ -61,20 +79,8 @@ class ImagePPM{
      * 
      * @return The file stream with the given ImagePPM output to it
      */
-    friend std::ofstream operator<<(std::ofstream file,ImagePPM outputFrom);
+    friend std::ofstream& operator<<(std::ofstream& file,const ImagePPM& outputFrom);
         
 };
-
-/**
- * @brief Parses in the data from a PPM image and converts it into a ImagePPM object.
- * 
- * @param filePath The file path to the image file to parse
- * @return An ImagePPM object storing the parsed data
- */
-ImagePPM parsePPMFile(std::string filePath);
-
-
-
-
 
 #endif
