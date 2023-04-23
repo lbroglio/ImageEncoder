@@ -107,14 +107,14 @@ std::ofstream& operator<<(std::ofstream& file,const Pixel& outputFrom){
 
 std::ofstream& operator<<(std::ofstream& file,const ImagePPM& outputFrom){
     //Output the header
-    file << 'P' << outputFrom.magicNumber << std::endl;
-    file << outputFrom.length << ' ' << outputFrom.width << std::endl;
-    file << outputFrom.maxColorVal << std::endl;
+    file << 'P' << outputFrom.magicNumber << '\n';
+    file << outputFrom.length << ' ' << outputFrom.width << '\n';
+    file << outputFrom.maxColorVal << '\n';
 
     //Output the data
     for(int i = 0; i < outputFrom.length; i++){
         for(int j = 0; j < outputFrom.width; j++){
-            file << (outputFrom.imageData[i][j]) << std::endl;
+            file << (outputFrom.imageData[i][j]) << '\n';
         }
     }
 

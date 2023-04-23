@@ -1,10 +1,13 @@
 #ifndef IMGFORMAT_H
 #define IMGFORMAT_H
 
+#include<bitset>
+
 /**
  * @brief Stores the RGB values for a pixel in this image as integers
  * 
  */
+
 struct Pixel{
     int red;
     int blue;
