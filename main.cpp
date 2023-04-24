@@ -30,6 +30,9 @@ std::bitset<8>* stringToBinary(std::string toConvert){
  * @param dataToEncode String to encode in the image
  */
 void encode(ImagePPM* encodeIN, std::string dataToEncode){
+    //Add a null terminator to the string
+    dataToEncode += '\0';
+
     //Put the string into binary
     std::bitset<8>* binToEncode = stringToBinary(dataToEncode);
     //Counter for what number pixel to edit
@@ -83,11 +86,58 @@ void encode(ImagePPM* encodeIN, std::string dataToEncode){
     }
 }
 
-std::string decode(ImagePPM decodeFrom);
 
+std::string decode(ImagePPM* decodeFrom){
+    std::string decodedData;
+
+    std::bitset<8> currentCharBin;
+
+    int pixelCounter = 0;
+    int inPixelCounter = 0;
+
+    int charBitCounter = 7;
+
+    bool foundTerminator = false;
+
+    while(foundTerminator == false && (pixelCounter+1) < (decodeFrom->length * decodeFrom->width)){
+        if(inPixelCounter == 3){
+            pixelCounter++;
+            inPixelCounter = 0;
+        }
+
+        if(charBitCounter == -1){
+            char toAdd = currentCharBin.to_ulong();
+
+            if(toAdd == '\0'){
+                foundTerminator = true;
+            }
+            else{
+                decodedData += toAdd;
+                charBitCounter = 7;
+            }
+        }
+
+        switch (inPixelCounter)
+        {
+            case 0:
+                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].red & 1;
+                break;
+            case 1:
+                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].green & 1;
+                break;
+            case 2:
+                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].blue & 1;
+                break;
+        }
+        charBitCounter -= 1;
+        inPixelCounter++;
+    }
+    return decodedData;
+}
 
 
 int main(int argc, char* argv[]){
+    /*
     ImagePPM parsedImg("./TestImages/WhiteSquare.ppm");
 
     encode(&parsedImg, "Hi, My name is Luke");
@@ -97,6 +147,11 @@ int main(int argc, char* argv[]){
     outFile << parsedImg;
 
     outFile.close();
+    */
+   ImagePPM parsedImg("./TestEncode.ppm");
+
+   std::cout << decode(&parsedImg) << std::endl;
+   
     
 
     return 0;
