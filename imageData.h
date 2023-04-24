@@ -10,8 +10,8 @@
 
 struct Pixel{
     int red;
-    int blue;
     int green;
+    int blue;
     /**
      * @brief Construct a new Pixel object
      * 
