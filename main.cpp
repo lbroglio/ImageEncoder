@@ -19,6 +19,8 @@ std::string readDataFile(std::ifstream* readFrom){
         readData += readChar;
         readChar = readFrom->get();
     }
+
+    return readData;
 }
 
 
@@ -53,9 +55,9 @@ int main(int argc, char* argv[]){
         //If the file option is set
         if(options.find('f') != std::string::npos){
             //If a file name is provided read it in
-            if(argc > 4){
+            if(argc >= 4){
                 //Set data file to the read file
-                dataFilePath = argv[4];
+                dataFilePath = argv[3];
             }
             //Else give it generic name
             else{
@@ -84,7 +86,7 @@ int main(int argc, char* argv[]){
              encodeIn = new ImagePPM(imgFilePath);
         }
         //If the file isn't found print error message and exit
-        catch(std::invalid_argument){
+        catch(std::invalid_argument const&){
             std::cout << "Error: The provided image file could not be opened." << std::endl;
             exit(1);
         }
@@ -109,24 +111,9 @@ int main(int argc, char* argv[]){
             //Close the file
             dataToEncodeFile.close();
         }
-        else{ 
-            //Set text to encode to the first word ignoring the first character since it should be quotes
-            std::string firstWord = argv[firstArgLoc + 1];
-            textToEncode = firstWord.substr(1);
-
-            //Read in the data to encode from the command line
-            for(int i = firstArgLoc + 2; i < argc; i++){
-                std::string currWord = argv[i];
-                textToEncode += " " + currWord;
-
-
-                //Stop when a closing quote is found and theres no slash with it
-                if((textToEncode[textToEncode.length() - 1] == '\"' || textToEncode[textToEncode.length() - 1] == '\'') && textToEncode[textToEncode.length() - 2] != '\\'){
-                    textToEncode.pop_back();
-                    break;
-                }
-            }
-
+        else{
+            //Set textToEncode to the text provided by the command line 
+            textToEncode = argv[firstArgLoc + 1];
         }
 
         //Encode text
@@ -142,7 +129,7 @@ int main(int argc, char* argv[]){
         std::ofstream outFile(outputFilePath);
 
         //Output the encoded image
-        outFile << encodeIn;
+        outFile << *encodeIn;
 
         //Close the file
         outFile.close();
@@ -156,7 +143,7 @@ int main(int argc, char* argv[]){
             decodeFrom = new ImagePPM(imgFilePath);
         }
         //If the file isn't found print error message and exit
-        catch(std::invalid_argument){
+        catch(std::invalid_argument const&){
             std::cout << "Error: The provided image file could not be opened." << std::endl;
             exit(1);
         }
