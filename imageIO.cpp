@@ -61,7 +61,6 @@ Pixel readPixelASCII(std::ifstream* imgFile){
 ImagePPM::ImagePPM(int magicNumber, int length, int width, int maxColorVal,Pixel** imageData) : magicNumber(magicNumber), length(length), width(width), maxColorVal(maxColorVal), imageData(imageData){}
 
 ImagePPM::~ImagePPM(){
-    std::cout << __PRETTY_FUNCTION__ << std::endl;
     for(int i = 0; i<length; i++){
         delete[] imageData[i];
     }
@@ -71,6 +70,11 @@ ImagePPM::~ImagePPM(){
 ImagePPM::ImagePPM(std::string filePath){
     //Load the file
     std::ifstream imgFile(filePath);
+
+    //Check if the provided file exists throw exception if it doesn't
+    if(!imgFile){
+        throw std::invalid_argument("Provided file does not exist");
+    }
     
     //Get the entry containting the magic number (Will be in P# format)
     std::string magicNumberStr = readEntryASCII(&imgFile);

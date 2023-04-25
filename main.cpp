@@ -1,158 +1,185 @@
 #include<iostream>
 #include<fstream>
-#include<bitset>
 #include<string>
-#include<cmath>
 #include"imageData.h"
+#include"encodeDecode.h"
+
+
 
 /**
- * @brief Converts the contents of a string to an array of Bitsets. Each bitset represents the binary value of the chars ASCII code.
+ * @brief Read in the data from a provided file into a string so it can be encoded
  * 
- * @param toConvert The string to convert
- * @return Pointer to the array of bitsets storing the characters in binary 
+ * @param readFrom Poitner to the file stream to read from.
+ * @return String containing the entire contents of the file
  */
-std::bitset<8>* stringToBinary(std::string toConvert){
-    std::bitset<8>* asBinary = new std::bitset<8>[toConvert.length()];
-
-    int convertLen =  toConvert.length();
-
-    for(int i = 0; i < convertLen; i++){
-        *(asBinary + i) = toConvert[i];
+std::string readDataFile(std::ifstream* readFrom){
+    std::string readData = "";
+    char readChar = readFrom->get();
+    while(readFrom->peek() != EOF){
+        readData += readChar;
+        readChar = readFrom->get();
     }
-
-    return asBinary;
-}
-
-/**
- * @brief Encodes a given string into the given PPM image
- * 
- * @param encodeIN Pointer to the PPM Image to encode the data in
- * @param dataToEncode String to encode in the image
- */
-void encode(ImagePPM* encodeIN, std::string dataToEncode){
-    //Add a null terminator to the string
-    dataToEncode += '\0';
-
-    //Put the string into binary
-    std::bitset<8>* binToEncode = stringToBinary(dataToEncode);
-    //Counter for what number pixel to edit
-    int pixelCounter = 0;
-    //Counter for value within pixel (RGB)
-    int inPixelCounter = 0;
-
-    int encodeLen = dataToEncode.length();
-    //For every character
-    for(int i =0; i < encodeLen; i++){
-        //For every bit in that characters binary version
-       for(int j = 7; j >= 0; j-=1){
-
-        //If the RGB count if 3 go to the next pixel's red value
-        if(inPixelCounter == 3){
-            pixelCounter++;
-            inPixelCounter = 0;
-        }
-
-        //Choose to edit the red green or blue value
-        switch(inPixelCounter){
-            case 0:{
-                //If the LSB in the red value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].red & 1) != (binToEncode[i][j])){
-                    //Toggle the LSB in the red value
-                    encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].red ^= 1UL <<  0;
-                }
-                break;
-            }
-            case 1:{
-                //If the LSB in the green value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].green & 1) != (binToEncode[i][j])){
-                    //Toggle the LSB in the green value
-                    encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].green ^= 1UL <<  0;
-                }
-                break;
-            }
-            case 2:{
-                //If the LSB in the blue value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].blue & 1) != (binToEncode[i][j])){
-                    //Toggle the LSB in the blue value
-                    encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].blue ^= 1UL <<  0;
-                }
-                break;
-            }
-        }
-
-        //Go to the next RGB value
-        inPixelCounter++;
-       }
-    }
-}
-
-
-std::string decode(ImagePPM* decodeFrom){
-    std::string decodedData;
-
-    std::bitset<8> currentCharBin;
-
-    int pixelCounter = 0;
-    int inPixelCounter = 0;
-
-    int charBitCounter = 7;
-
-    bool foundTerminator = false;
-
-    while(foundTerminator == false && (pixelCounter+1) < (decodeFrom->length * decodeFrom->width)){
-        if(inPixelCounter == 3){
-            pixelCounter++;
-            inPixelCounter = 0;
-        }
-
-        if(charBitCounter == -1){
-            char toAdd = currentCharBin.to_ulong();
-
-            if(toAdd == '\0'){
-                foundTerminator = true;
-            }
-            else{
-                decodedData += toAdd;
-                charBitCounter = 7;
-            }
-        }
-
-        switch (inPixelCounter)
-        {
-            case 0:
-                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].red & 1;
-                break;
-            case 1:
-                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].green & 1;
-                break;
-            case 2:
-                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].blue & 1;
-                break;
-        }
-        charBitCounter -= 1;
-        inPixelCounter++;
-    }
-    return decodedData;
 }
 
 
 int main(int argc, char* argv[]){
-    /*
-    ImagePPM parsedImg("./TestImages/WhiteSquare.ppm");
 
-    encode(&parsedImg, "Hi, My name is Luke");
+    //Location of the first argument. Will be moved if options flags are given
+    int firstArgLoc = 1;
+    //Flag for if the user want to encode or decode information. 0 is encode, 1 is decode
+    int encodeDecodeFlag = 0;
+    //String to hold the user given file path is a file is provided for data
+    std::string dataFilePath = "";
 
-    std::ofstream outFile("./TestEncode.ppm");
+    //If options are given on the command line
+    if(argv[1][0] == '-'){
+        //Move location of first argument forward
+        firstArgLoc += 1;
 
-    outFile << parsedImg;
+        //Print error message and exit if there are two few arguments
+        if(argc < 3){
+            std::cout << "Error: Insuficient number of command line arguments" << std::endl;
+            exit(1);
+        }
 
-    outFile.close();
-    */
-   ImagePPM parsedImg("./TestEncode.ppm");
+        //Get options
+        std::string options = argv[1];
 
-   std::cout << decode(&parsedImg) << std::endl;
-   
-    
+        //If the decode option is set switch the decode flag to one
+        if(options.find('d') != std::string::npos){
+            encodeDecodeFlag = 1;
+        }
+
+        //If the file option is set
+        if(options.find('f') != std::string::npos){
+            //If a file name is provided read it in
+            if(argc > 4){
+                //Set data file to the read file
+                dataFilePath = argv[4];
+            }
+            //Else give it generic name
+            else{
+                dataFilePath = "./decoded_text.txt";
+            }
+
+
+        }
+
+    }
+
+    //Get location of the image file
+    std::string imgFilePath = argv[firstArgLoc];
+
+    //Encode data
+    if(encodeDecodeFlag == 0){ 
+      //Print error message and exit if there are two few arguments
+        if(firstArgLoc != 1 && argc < 4){
+            std::cout << "Error: Insuficient number of command line arguments" << std::endl;
+            exit(1);         
+        }
+
+        ImagePPM* encodeIn;
+        //Read in provided file as a ImagePPM object
+        try{
+             encodeIn = new ImagePPM(imgFilePath);
+        }
+        //If the file isn't found print error message and exit
+        catch(std::invalid_argument){
+            std::cout << "Error: The provided image file could not be opened." << std::endl;
+            exit(1);
+        }
+
+        //String containing data to encode into the image
+        std::string textToEncode;
+
+        //If a data file has been set
+        if(dataFilePath != ""){
+            //Open the file
+            std::ifstream dataToEncodeFile(dataFilePath);
+
+            //If the file is invalid print and error message and exit
+            if(!dataToEncodeFile){
+                std::cout << "Error: The provided data file could not be opened." << std::endl;
+                exit(1);
+            }
+
+            //Save the contents of the file to textToEncode 
+            textToEncode = readDataFile(&dataToEncodeFile);
+
+            //Close the file
+            dataToEncodeFile.close();
+        }
+        else{ 
+            //Set text to encode to the first word ignoring the first character since it should be quotes
+            std::string firstWord = argv[firstArgLoc + 1];
+            textToEncode = firstWord.substr(1);
+
+            //Read in the data to encode from the command line
+            for(int i = firstArgLoc + 2; i < argc; i++){
+                std::string currWord = argv[i];
+                textToEncode += " " + currWord;
+
+
+                //Stop when a closing quote is found and theres no slash with it
+                if((textToEncode[textToEncode.length() - 1] == '\"' || textToEncode[textToEncode.length() - 1] == '\'') && textToEncode[textToEncode.length() - 2] != '\\'){
+                    textToEncode.pop_back();
+                    break;
+                }
+            }
+
+        }
+
+        //Encode text
+        encode(encodeIn,textToEncode);
+
+        //Get name of the encoded file without .ppm
+        std::string inputFileName = imgFilePath.substr(0,imgFilePath.length() - 4);
+
+        //Create file path to output file to 
+        std::string outputFilePath = inputFileName += "_ENCODED.ppm";
+
+        //Open output file 
+        std::ofstream outFile(outputFilePath);
+
+        //Output the encoded image
+        outFile << encodeIn;
+
+        //Close the file
+        outFile.close();
+
+        delete encodeIn;
+    }
+    else{
+        ImagePPM* decodeFrom;
+        //Read in provided file as a ImagePPM object
+        try{
+            decodeFrom = new ImagePPM(imgFilePath);
+        }
+        //If the file isn't found print error message and exit
+        catch(std::invalid_argument){
+            std::cout << "Error: The provided image file could not be opened." << std::endl;
+            exit(1);
+        }
+
+        //Decode the text from the image
+        std::string decodedText = decode(decodeFrom);
+
+        delete decodeFrom;
+
+        //If the file option was set output the decoced text to a file
+        if(dataFilePath != ""){
+            std::ofstream outFile(dataFilePath);
+
+            outFile << decodedText;
+
+            outFile.close();
+        }
+
+        //Output the decoded text to the console.
+        std::cout << decodedText << std::endl;
+
+
+    }
 
     return 0;
 }
