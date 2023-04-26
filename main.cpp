@@ -138,7 +138,7 @@ int main(int argc, char* argv[]){
 
         //Change the type if the user put an overide flag
         if(typeOveride != -1){
-            encodeIn->magicNumber = typeOveride;
+            encodeIn->magicNumber = typeOveride;       
         }
 
         //Open output file 

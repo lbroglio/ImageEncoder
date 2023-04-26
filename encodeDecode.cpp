@@ -53,25 +53,25 @@ void encode(ImagePPM* encodeIN, std::string dataToEncode){
         switch(inPixelCounter){
             case 0:{
                 //If the LSB in the red value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].red & 1) != (binToEncode[i][j])){
+                if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].red & 1) != (binToEncode[i][j])){
                     //Toggle the LSB in the red value
-                    encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].red ^= 1UL <<  0;
+                    encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].red ^= 1UL <<  0;
                 }
                 break;
             }
             case 1:{
                 //If the LSB in the green value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].green & 1) != (binToEncode[i][j])){
+                if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].green & 1) != (binToEncode[i][j])){
                     //Toggle the LSB in the green value
-                    encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].green ^= 1UL <<  0;
+                    encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].green ^= 1UL <<  0;
                 }
                 break;
             }
             case 2:{
                 //If the LSB in the blue value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].blue & 1) != (binToEncode[i][j])){
+                if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].blue & 1) != (binToEncode[i][j])){
                     //Toggle the LSB in the blue value
-                    encodeIN->imageData[pixelCounter / 512][pixelCounter % 512].blue ^= 1UL <<  0;
+                    encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].blue ^= 1UL <<  0;
                 }
                 break;
             }
@@ -133,15 +133,15 @@ std::string decode(ImagePPM* decodeFrom){
         {
             case 0: 
                 //Read the LSB from the red value
-                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].red & 1;
+                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / decodeFrom->length][pixelCounter % decodeFrom->length].red & 1;
                 break;
             case 1:
                 //Read the LSB from the green value
-                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].green & 1;
+                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / decodeFrom->length][pixelCounter % decodeFrom->length].green & 1;
                 break;
             case 2:
                 //Read the LSB from the blue value
-                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / 512][pixelCounter % 512].blue & 1;
+                currentCharBin[charBitCounter] =  decodeFrom->imageData[pixelCounter / decodeFrom->length][pixelCounter % decodeFrom->length].blue & 1;
                 break;
         }
         
