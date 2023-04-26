@@ -32,6 +32,8 @@ int main(int argc, char* argv[]){
     int encodeDecodeFlag = 0;
     //String to hold the user given file path is a file is provided for data
     std::string dataFilePath = "";
+    //Used to set the type of PPM (P3 or P6) depending on command line flags
+    int typeOveride = -1;
 
     //If options are given on the command line
     if(argv[1][0] == '-'){
@@ -50,6 +52,15 @@ int main(int argc, char* argv[]){
         //If the decode option is set switch the decode flag to one
         if(options.find('d') != std::string::npos){
             encodeDecodeFlag = 1;
+        }
+
+        //If the user puts the flag 3 overide output type to a P3 PPM
+        if(options.find('3') != std::string::npos){
+            typeOveride = 3;
+        }
+        //If the user puts the flag 6 overide output type to a P6 PPM
+        else if(options.find('6') != std::string::npos){
+            typeOveride = 6;
         }
 
         //If the file option is set
@@ -124,6 +135,11 @@ int main(int argc, char* argv[]){
 
         //Create file path to output file to 
         std::string outputFilePath = inputFileName += "_ENCODED.ppm";
+
+        //Change the type if the user put an overide flag
+        if(typeOveride != -1){
+            encodeIn->magicNumber = typeOveride;
+        }
 
         //Open output file 
         std::ofstream outFile;
