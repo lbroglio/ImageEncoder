@@ -1,0 +1,107 @@
+commit a40b9a41cd2c20f7811531bbc773e791c33f9f35
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Wed Apr 26 15:01:55 2023 -0500
+
+    New test image
+
+commit 1254d8f9202c949a8e47f295daa86050f349f312
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Wed Apr 26 14:47:18 2023 -0500
+
+    Bug fixes and need test file
+
+commit 75a8f8b47949554bc6edc4f300751a93ecbf12fc
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Tue Apr 25 21:45:25 2023 -0500
+
+    Added ability to override the type of PPM outputted with command line flags
+
+commit 700444d7da917d410f9919d6aecb73e3c40ff2d5
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Tue Apr 25 21:31:43 2023 -0500
+
+    Added ability to use P6(Binary) ppms and made tweaks to test files (Made the red square a P6)
+
+commit 75212724c7537e8d389cba8a2664b7f237c56739
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Tue Apr 25 09:49:03 2023 -0500
+
+    New  test images
+
+commit d75f19492a75497876fa1f5f23e53d65f55c4882
+Author: Luke Broglio <114245387+lbroglio@users.noreply.github.com>
+Date:   Tue Apr 25 09:45:50 2023 -0500
+
+    Removed Test File to be swapped out
+
+commit 699b87a3ad26daced61512c8c3cc8b2f7ac08811
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Tue Apr 25 00:29:23 2023 -0500
+
+    Bug fixes and more test files
+
+commit a5e5b5ca08396c3e12e87ca0f4d6117938fb2fa1
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Tue Apr 25 00:00:27 2023 -0500
+
+    Finshed comments for decode. Reworked main to handle command line arguments from the user. Seperated main and the encoding and ecoding function into differnt files
+
+commit 3ee993d4c776179e7d987fa9863fce008a5c3a66
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Mon Apr 24 11:47:01 2023 -0500
+
+    Decode function completeled. Decode and encode have been tested once and worked
+
+commit 69f8ba8d1a4e0a89c1fa7b8b3d72e977e0c28ecc
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Mon Apr 24 11:16:31 2023 -0500
+
+    Have encode function. It makes chnages to the file but without the decode function it can't be tested for correctness. Also added makefile
+
+commit 401ed7b510ee696f9db0371429bf35a01de4543e
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Sun Apr 23 15:52:35 2023 -0500
+
+    Wrote function to encode data into ppm
+
+commit 8a76f3f39a304b20538df6e25fb99561e4954609
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Sat Apr 22 17:48:53 2023 -0500
+
+    Reworked the ParsePPM function to be a constructor for a ImagePPM object
+
+commit 9314b102ff34d98142f76c3b5db4b550f8d291f7
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Fri Apr 21 11:49:33 2023 -0500
+
+    Created output functions for ImagePPM  and pixel
+
+commit 29cb0508f75b52102b7c44db2ec07fa115008d82
+Author: Luke Broglio <114245387+lbroglio@users.noreply.github.com>
+Date:   Fri Apr 21 11:32:15 2023 -0500
+
+    Removed Binary file which shouldn't  have been commited
+
+commit b9b02d66bf05334d082edf6bde162a9bc5f8e0b1
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Fri Apr 21 11:27:21 2023 -0500
+
+    Renamed some files and finisshed the readPixelASCII function
+
+commit 1976205624fb1dc32698a3ee52e70065ad7945eb
+Author: Luke Broglio <114245387+lbroglio@users.noreply.github.com>
+Date:   Fri Apr 21 11:22:49 2023 -0500
+
+    Removed Bad directories
+
+commit 475daf4d9b29514c66c76f4fbbef5d354e100aa3
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Thu Apr 20 15:42:27 2023 -0500
+
+    Started working on parser functions. Also created destructor for the ImagePPM class
+
+commit 8f3214f6496410037977c1600462e4b6272bce4b
+Author: lbroglio <lbroglio@iastate.edu>
+Date:   Wed Apr 19 21:33:12 2023 -0500
+
+    Intial Commit. Have data structrure needed for P3 PPMs
