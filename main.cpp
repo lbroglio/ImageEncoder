@@ -126,7 +126,15 @@ int main(int argc, char* argv[]){
         std::string outputFilePath = inputFileName += "_ENCODED.ppm";
 
         //Open output file 
-        std::ofstream outFile(outputFilePath);
+        std::ofstream outFile;
+
+        //Open in correct mode normal for P3 binary for P6
+        if(encodeIn->magicNumber == 3){
+            outFile.open(outputFilePath);
+        }
+        else{
+            outFile.open(outputFilePath,std::ios::binary);
+        }
 
         //Output the encoded image
         outFile << *encodeIn;

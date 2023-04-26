@@ -83,6 +83,26 @@ class ImagePPM{
      * @return The file stream with the given ImagePPM output to it
      */
     friend std::ofstream& operator<<(std::ofstream& file,const ImagePPM& outputFrom);
+
+    /**
+     * @brief Prints the contents of a P3 PPM to the provided file stream.
+     * All output will be in ascii 
+     * 
+     * @param file The filestream to output to
+     * @param outputFrom The ImagePPM object to output
+     * @return std::ofstream& The file stream with the given ImagePPM output to it
+     */
+    friend std::ofstream& printP3(std::ofstream& file,const ImagePPM& outputFrom);
+
+    /**
+     * @brief Prints the contents of a P6 PPM to the provided file stream.
+     * All output will be in ascii 
+     * 
+     * @param file The filestream to output to
+     * @param outputFrom The ImagePPM object to output
+     * @return std::ofstream& The file stream with the given ImagePPM output to it
+     */
+    friend std::ofstream& printP6(std::ofstream& file,const ImagePPM& outputFrom);
         
 };
 
