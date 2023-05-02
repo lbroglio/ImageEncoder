@@ -81,6 +81,7 @@ void encode(ImagePPM* encodeIN, std::string dataToEncode){
         inPixelCounter++;
        }
     }
+    delete binToEncode;
 }
 
 
