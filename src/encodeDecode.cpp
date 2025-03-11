@@ -17,14 +17,14 @@ std::bitset<8>* stringToBinary(std::string toConvert){
 }
 
 
-void encode(ImagePPM* encodeIN, std::string dataToEncode){
+void encode(ImagePPM* encodeIN, std::string dataToEncode, int startingPoint){
     //Add a null terminator to the string
     dataToEncode += '\0';
 
     //Put the string into binary
     std::bitset<8>* binToEncode = stringToBinary(dataToEncode);
     //Counter for what number pixel to edit
-    int pixelCounter = 0;
+    int pixelCounter = startingPoint;
     //Counter for value within pixel (RGB)
     int inPixelCounter = 0;
 
@@ -47,6 +47,11 @@ void encode(ImagePPM* encodeIN, std::string dataToEncode){
         if(inPixelCounter == 3){
             pixelCounter++;
             inPixelCounter = 0;
+            // Wrap around the image if needed
+            if(pixelCounter >= encodeIN->length){
+                pixelCounter = 0;
+
+            }
         }
 
         //Choose to edit the red green or blue value
@@ -79,13 +84,14 @@ void encode(ImagePPM* encodeIN, std::string dataToEncode){
 
         //Go to the next RGB value
         inPixelCounter++;
+
        }
     }
     delete binToEncode;
 }
 
 
-std::string decode(ImagePPM* decodeFrom){
+std::string decode(ImagePPM* decodeFrom, int startingPoint){
     //Variable to store the read characters
     std::string decodedData;
 
@@ -93,7 +99,7 @@ std::string decode(ImagePPM* decodeFrom){
     std::bitset<8> currentCharBin;
 
     //Track what pxiel and color value to read
-    int pixelCounter = 0;
+    int pixelCounter = startingPoint;
     int inPixelCounter = 0;
     
     //Track which bit in the character is being read
@@ -109,6 +115,11 @@ std::string decode(ImagePPM* decodeFrom){
             //Move to the first color value of the next pixel
             pixelCounter++;
             inPixelCounter = 0;
+            // Wrap around the image if needed
+            if(pixelCounter >= decodeFrom->length){
+                pixelCounter = 0;
+
+            }
         }
 
         //If 8 bits have been read since the last character was added
