@@ -1,14 +1,22 @@
-imageSten: imageIO.o main.o encodeDecode.o
-	g++ -ggdb -Wall -Werror imageIO.o main.o encodeDecode.o -o imageSten
+CC= g++
+APPNAME= ImageSten
+FLAGS= -Wall -Werror
+OBJECTS= bin/encodeDecode.o bin/imageIo.o bin/main.o
 
-main.o: main.cpp imageData.h encodeDecode.h
-	g++ -ggdb -Wall -Werror main.cpp -c
+.PHONY: clean 
 
-encodeDecode.o: encodeDecode.cpp imageData.h encodeDecode.h
-	g++ -ggdb -Wall -Werror encodeDecode.cpp -c
+$(APPNAME): $(OBJECTS)
+	$(CC) $^ $(FLAGS) -o $(APPNAME)
 
-imageIO.o: imageIO.cpp imageData.h
-	g++ -ggdb -Wall -Werror imageIO.cpp -c
+
+$(OBJECTS): bin/%.o : src/%.cpp bin
+	$(CC) $(FLAGS) -c $< $(LIB_PATH) $(LIBS) -o $@
+
+$(TEST_OBJECTS): bin/%.o : test/%.cpp bin
+	$(CC) $(FLAGS) -c $< $(LIB_PATH) $(LIBS) -o $@
+
+bin: 
+	mkdir bin
 
 clean:
-	rm imageIO.o main.o encodeDecode.o imageSten
+	rm -rf bin 

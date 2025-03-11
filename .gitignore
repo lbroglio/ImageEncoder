@@ -1,0 +1,8 @@
+# Build Artifacts
+bin
+
+# IDEs
+.vscode
+
+#MacOs
+.DS_Store
