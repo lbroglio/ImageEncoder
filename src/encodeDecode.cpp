@@ -27,7 +27,6 @@ void encode(ImagePPM* encodeIN, std::string dataToEncode, int startingPoint){
     int pixelCounter = startingPoint;
     //Counter for value within pixel (RGB)
     int inPixelCounter = 0;
-
     int encodeLen = dataToEncode.length();
 
     //Check if the file has space to encode the given data
@@ -43,44 +42,44 @@ void encode(ImagePPM* encodeIN, std::string dataToEncode, int startingPoint){
         //For every bit in that characters binary version
        for(int j = 7; j >= 0; j-=1){
 
-        //If the RGB count if 3 go to the next pixel's red value
-        if(inPixelCounter == 3){
-            pixelCounter++;
-            inPixelCounter = 0;
-            // Wrap around the image if needed
-            if(pixelCounter >= encodeIN->length){
-                pixelCounter = 0;
+            //If the RGB count if 3 go to the next pixel's red value
+            if(inPixelCounter == 3){
+                pixelCounter++;
+                inPixelCounter = 0;
+                // Wrap around the image if needed
+                if(pixelCounter >= encodeIN->length * encodeIN->width){
+                    pixelCounter = 0;
 
+                }
             }
-        }
 
-        //Choose to edit the red green or blue value
-        switch(inPixelCounter){
-            case 0:{
-                //If the LSB in the red value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].red & 1) != (binToEncode[i][j])){
-                    //Toggle the LSB in the red value
-                    encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].red ^= 1UL <<  0;
+            //Choose to edit the red green or blue value
+            switch(inPixelCounter){
+                case 0:{
+                    //If the LSB in the red value is different than the current bit to encode
+                    if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].red & 1) != (binToEncode[i][j])){
+                        //Toggle the LSB in the red value
+                        encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].red ^= 1UL <<  0;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 1:{
-                //If the LSB in the green value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].green & 1) != (binToEncode[i][j])){
-                    //Toggle the LSB in the green value
-                    encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].green ^= 1UL <<  0;
+                case 1:{
+                    //If the LSB in the green value is different than the current bit to encode
+                    if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].green & 1) != (binToEncode[i][j])){
+                        //Toggle the LSB in the green value
+                        encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].green ^= 1UL <<  0;
+                    }
+                    break;
                 }
-                break;
-            }
-            case 2:{
-                //If the LSB in the blue value is different than the current bit to encode
-                if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].blue & 1) != (binToEncode[i][j])){
-                    //Toggle the LSB in the blue value
-                    encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].blue ^= 1UL <<  0;
+                case 2:{
+                    //If the LSB in the blue value is different than the current bit to encode
+                    if((encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].blue & 1) != (binToEncode[i][j])){
+                        //Toggle the LSB in the blue value
+                        encodeIN->imageData[pixelCounter / encodeIN->length][pixelCounter % encodeIN->length].blue ^= 1UL <<  0;
+                    }
+                    break;
                 }
-                break;
             }
-        }
 
         //Go to the next RGB value
         inPixelCounter++;
@@ -108,15 +107,15 @@ std::string decode(ImagePPM* decodeFrom, int startingPoint){
     //If a null terminator has been found
     bool foundTerminator = false;
 
-    //Read from the file by taking LSB until a null terminator is found or the end of the file is reached
-    while(foundTerminator == false && (pixelCounter+1) < (decodeFrom->length * decodeFrom->width)){
+    //Read from the file by taking LSB until a null terminator is found 
+    while(foundTerminator == false){
         //If all of the color values from the current pixel have been read
         if(inPixelCounter == 3){
             //Move to the first color value of the next pixel
             pixelCounter++;
             inPixelCounter = 0;
             // Wrap around the image if needed
-            if(pixelCounter >= decodeFrom->length){
+            if(pixelCounter >= decodeFrom->length * decodeFrom->width){
                 pixelCounter = 0;
 
             }

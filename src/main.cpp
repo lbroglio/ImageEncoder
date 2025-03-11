@@ -23,70 +23,96 @@ std::string readDataFile(std::ifstream* readFrom){
     return readData;
 }
 
+/**
+ * @brief Interpret the flags set by the user 
+ * 
+ * @param flags The string containing the flags
+ * @param encodeDecodeFlag Memory location to set the flag for whether the program should encode or decode from a file
+ * @param typeOverride Memory location to set the override for the type of PPM to output.
+ * @param fileModeFlag Memory location to set the flag for whether the program is in file mode
+ *  (In file mode data to encode is read from a file and in decode mode it is output to a file)
+ *  1 means the program is in file mode 0 means it is not
+ */
+void readFlags(std::string flags, int* encodeDecodeFlag, int* typeOverride, int* fileModeFlag){
+    //If the decode option is set switch the decode flag to one
+    if(flags.find('d') != std::string::npos){
+        *encodeDecodeFlag = 1;
+    }
+
+    //If the user puts the flag 3 overide output type to a P3 PPM
+    if(flags.find('3') != std::string::npos){
+        *typeOverride = 3;
+    }
+    //If the user puts the flag 6 overide output type to a P6 PPM
+    else if(flags.find('6') != std::string::npos){
+        *typeOverride = 6;
+    }
+
+    //If the file option is set
+    if(flags.find('f') != std::string::npos){
+        *fileModeFlag = 1;
+    }
+
+}
+
 
 int main(int argc, char* argv[]){
 
-    //Location of the first argument. Will be moved if options flags are given
-    int firstArgLoc = 1;
-    //Flag for if the user want to encode or decode information. 0 is encode, 1 is decode
+    // Current location of the argument being interpreted
+    int argLoc = 1;
+    // Flag for if the user want to encode or decode information. 0 is encode, 1 is decode
     int encodeDecodeFlag = 0;
-    //String to hold the user given file path is a file is provided for data
+    /*  Flag for whether the program is in file mode
+        (In file mode data to encode is read from a file and in decode mode it is output to a file)
+        1 means the program is in file mode 0 means it is not
+    */
+    int fileModeFlag = 0;
+    // String to hold the user given file path if a file is provided for data
     std::string dataFilePath = "";
-    //Used to set the type of PPM (P3 or P6) depending on command line flags
-    int typeOveride = -1;
+    // The path to the file to output the result of the operation to (Depending on the settings files may not be output to)
+    std::string outputFilePath = "";
+    // Used to set the type of PPM (P3 or P6) depending on command line flags
+    int typeOverride = -1;
+    // The position to start reading or writing data from as a pixel index
+    int startPos = 0;
 
-    //If options are given on the command line
-    if(argv[1][0] == '-'){
+
+    //Print error message and exit if there are two few arguments
+    if(argc < 3){
+        std::cout << "Error: Insuficient number of command line arguments" << std::endl;
+        exit(1);
+    }
+
+    //If flags are set on the command line
+    if(argv[1][0] == '-' && argv[1][1] != '-'){
         //Move location of first argument forward
-        firstArgLoc += 1;
+        argLoc += 1;
 
-        //Print error message and exit if there are two few arguments
-        if(argc < 3){
-            std::cout << "Error: Insuficient number of command line arguments" << std::endl;
-            exit(1);
+        // Read the flags
+        readFlags(argv[1], &encodeDecodeFlag, &typeOverride, &fileModeFlag);
+    }
+
+    // Move through the options set by the user
+    std::string currentArgStr = argv[argLoc];
+    // While an option is being read
+    while(currentArgStr.substr(0, 2) == "--"){
+        if(currentArgStr == "--output" || currentArgStr == "--o"){
+            outputFilePath = argv[++argLoc];
+        }
+        else if(currentArgStr == "--starting-point" || currentArgStr == "--s"){
+            startPos = std::atoi(argv[++argLoc]);
         }
 
-        //Get options
-        std::string options = argv[1];
-
-        //If the decode option is set switch the decode flag to one
-        if(options.find('d') != std::string::npos){
-            encodeDecodeFlag = 1;
-        }
-
-        //If the user puts the flag 3 overide output type to a P3 PPM
-        if(options.find('3') != std::string::npos){
-            typeOveride = 3;
-        }
-        //If the user puts the flag 6 overide output type to a P6 PPM
-        else if(options.find('6') != std::string::npos){
-            typeOveride = 6;
-        }
-
-        //If the file option is set
-        if(options.find('f') != std::string::npos){
-            //If a file name is provided read it in
-            if(argc >= 4){
-                //Set data file to the read file
-                dataFilePath = argv[3];
-            }
-            //Else give it generic name
-            else{
-                dataFilePath = "./decoded_text.txt";
-            }
-
-
-        }
-
+        currentArgStr = argv[++argLoc];
     }
 
     //Get location of the image file
-    std::string imgFilePath = argv[firstArgLoc];
+    std::string imgFilePath = currentArgStr;
 
     //Encode data
     if(encodeDecodeFlag == 0){ 
-      //Print error message and exit if there are two few arguments
-        if(firstArgLoc != 1 && argc < 4){
+        // Print error message and exit if there are two few arguments
+        if(argc - argLoc < 2){
             std::cout << "Error: Insuficient number of command line arguments" << std::endl;
             exit(1);         
         }
@@ -105,10 +131,10 @@ int main(int argc, char* argv[]){
         //String containing data to encode into the image
         std::string textToEncode;
 
-        //If a data file has been set
-        if(dataFilePath != ""){
+        // If the program is in file mode
+        if(fileModeFlag == 1){
             //Open the file
-            std::ifstream dataToEncodeFile(dataFilePath);
+            std::ifstream dataToEncodeFile(argv[++argLoc]);
 
             //If the file is invalid print and error message and exit
             if(!dataToEncodeFile){
@@ -124,21 +150,23 @@ int main(int argc, char* argv[]){
         }
         else{
             //Set textToEncode to the text provided by the command line 
-            textToEncode = argv[firstArgLoc + 1];
+            textToEncode = argv[++argLoc];
         }
 
         //Encode text
-        encode(encodeIn,textToEncode);
+        encode(encodeIn, textToEncode, startPos);
 
         //Get name of the encoded file without .ppm
         std::string inputFileName = imgFilePath.substr(0,imgFilePath.length() - 4);
 
-        //Create file path to output file to 
-        std::string outputFilePath = inputFileName += "_ENCODED.ppm";
+        // If an output file has not been set; create file path to output file to 
+        if(outputFilePath == ""){
+            outputFilePath = inputFileName += "_ENCODED.ppm";
+        }
 
         //Change the type if the user put an overide flag
-        if(typeOveride != -1){
-            encodeIn->magicNumber = typeOveride;       
+        if(typeOverride != -1){
+            encodeIn->magicNumber = typeOverride;       
         }
 
         //Open output file 
@@ -149,7 +177,7 @@ int main(int argc, char* argv[]){
             outFile.open(outputFilePath);
         }
         else{
-            outFile.open(outputFilePath,std::ios::binary);
+            outFile.open(outputFilePath, std::ios::binary);
         }
 
         //Output the encoded image
@@ -173,21 +201,30 @@ int main(int argc, char* argv[]){
         }
 
         //Decode the text from the image
-        std::string decodedText = decode(decodeFrom);
+        std::string decodedText = decode(decodeFrom, startPos);
 
         delete decodeFrom;
 
         //If the file option was set output the decoced text to a file
-        if(dataFilePath != ""){
-            std::ofstream outFile(dataFilePath);
+        if(fileModeFlag == 1){
+            if(outputFilePath == ""){
+                std::cout << "Error: The required option --output has not been set." << std::endl;
+                exit(1);
+            }
+
+
+            std::ofstream outFile(outputFilePath);
 
             outFile << decodedText;
 
             outFile.close();
         }
+        else{
+            //Output the decoded text to the console.
+            std::cout << decodedText << std::endl;
+        }
 
-        //Output the decoded text to the console.
-        std::cout << decodedText << std::endl;
+
 
 
     }
