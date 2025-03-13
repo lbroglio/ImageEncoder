@@ -55,7 +55,7 @@ std::string readDataFile(std::ifstream* readFrom){
         readData += readChar;
         readChar = readFrom->get();
     }
-
+    readData += readChar;
     return readData;
 }
 
