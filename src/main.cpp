@@ -5,6 +5,42 @@
 #include"encodeDecode.h"
 
 
+/**
+ * @brief Print the help string for this program
+ */
+void printHelpStr(){
+    std::string helpStr = 
+        "Usage: \n"
+            "\t ImageSten -[flags] [--option..] <Filepath to Image file> {Data to encode | file to get data from} \n"
+        "Flags: \n"
+            "\t -h: Print the help information (This output) \n"
+            "\t -3: Override the output .ppm image to be in p3 (ASCII) format.\n"
+            "\t -6: Override the output .ppm image to be in p6 (binary) format.\n"
+            "\t -d: Decode data from an image (instead of encoding like in default)\n"
+            "\t -f: Puts the program into file mode. \n"
+                "\t\tIf encoding the program will then read data to encode from a file specified in the second argument.\n"
+                "\t\tIf decoding the program will ouput the decoded data to a file. "
+                    "Name of the file must be set with the output option. \n"
+        "Options: \n"
+            "\t --output/--o: Set the name of the any output file. \n"
+                "\t\tIf in encode mode this will set the name of the output .ppm file\n"
+                "\t\tIf in decode mode this will set the name of the file the data is output to if the program is in file mode (-f flag)\n"
+            "\t --start-point/--s: Set the location within the file to start reading from/ writing to\n"
+        "Examples: \n"
+            "\t Encode \"Hello, World.\" into the image TestFiles/RedSquare.ppm:\n"
+                "\t\t ImageSten TestFiles/RedSquare.ppm  \"Hello, World.\"\n"
+            "\t Encode the text in the file TestFiles/TheTimeMachine.txt into the image TestFiles/Galaxy.ppm and output it as "
+            "encoded_image.ppm:\n"
+                "\t\t ImageSten -f --output encoded_image.ppm TestFiles/Galaxy.ppm TestFiles/TheTimeMachine.txt\n"
+            "\t Decode the data from the image RedSquare_ENCODED.ppm:\n"
+                "\t\t ImageSten -d RedSquare_ENCODED.ppm\n"
+            "\t Decode the data from the image encoded_image.ppm and write it to the file data.txt:\n"
+                "\t\t ImageSten -df --output data.txt encoded_image.ppm\n"
+        ;
+
+    std::cout << helpStr << std::endl;
+
+}
 
 /**
  * @brief Read in the data from a provided file into a string so it can be encoded
@@ -53,6 +89,12 @@ void readFlags(std::string flags, int* encodeDecodeFlag, int* typeOverride, int*
         *fileModeFlag = 1;
     }
 
+    // If the help option is set 
+    if(flags.find('h') != std::string::npos){
+        printHelpStr();
+        exit(0);
+    }
+
 }
 
 
@@ -76,11 +118,10 @@ int main(int argc, char* argv[]){
     // The position to start reading or writing data from as a pixel index
     int startPos = 0;
 
-
-    //Print error message and exit if there are two few arguments
-    if(argc < 3){
-        std::cout << "Error: Insuficient number of command line arguments" << std::endl;
-        exit(1);
+    // If no args were given print help
+    if(argc == 1){
+        printHelpStr();
+        exit(0);
     }
 
     //If flags are set on the command line
@@ -90,6 +131,12 @@ int main(int argc, char* argv[]){
 
         // Read the flags
         readFlags(argv[1], &encodeDecodeFlag, &typeOverride, &fileModeFlag);
+    }
+
+    //Print error message and exit if there are two few arguments
+    if(argc < 3){
+        std::cout << "Error: Insuficient number of command line arguments" << std::endl;
+        exit(1);
     }
 
     // Move through the options set by the user
